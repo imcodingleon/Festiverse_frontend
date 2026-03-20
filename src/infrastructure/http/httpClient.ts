@@ -1,5 +1,3 @@
-import { API_BASE_URL } from "@/infrastructure/config/env";
-
 export class HttpError extends Error {
   constructor(
     public status: number,
@@ -14,7 +12,7 @@ export async function get<T>(
   path: string,
   params?: Record<string, string | number | undefined>,
 ): Promise<T> {
-  const url = new URL(path, API_BASE_URL);
+  const url = new URL(path, window.location.origin);
 
   if (params) {
     for (const [key, value] of Object.entries(params)) {

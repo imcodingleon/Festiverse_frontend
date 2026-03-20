@@ -1,65 +1,71 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { AppLayout } from "@/ui/layout/AppLayout";
+import { Header } from "@/ui/layout/Header";
+import { FilterSection } from "@/features/performance/ui/components/FilterSection";
+import { StreakCalendar } from "@/features/performance/ui/components/StreakCalendar";
+import { PerformanceList } from "@/features/performance/ui/components/PerformanceList";
+import { usePerformanceList } from "@/features/performance/application/hooks/usePerformanceList";
+import { useFilter } from "@/features/performance/application/hooks/useFilter";
+
+export default function HomePage() {
+  const listState = usePerformanceList();
+  const { filters, setSelectedDate, setCalendarMonth, resetAllFilters } = useFilter();
+
+  // 캘린더에는 날짜 필터링 전 전체 데이터를 사용 (selectedDate로 필터링해도 캘린더 표시 유지)
+  const calendarPerformances =
+    listState.status === "LOADED" ? listState.allData : [];
+
+  const hasActiveFilters =
+    filters.keyword !== "" ||
+    filters.region !== "" ||
+    filters.genre !== "" ||
+    filters.selectedDate !== "" ||
+    filters.startDate !== "";
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <AppLayout>
+      <Header />
+      <main className="px-4 space-y-6 lg:space-y-0 lg:grid lg:grid-cols-[450px_1fr] lg:gap-8 lg:max-w-[1600px] lg:mx-auto lg:px-0 lg:py-6">
+        {/* 모바일 전용 필터 */}
+        <div className="lg:hidden">
+          <FilterSection />
+        </div>
+
+        {/* PC 사이드바 */}
+        <aside className="hidden lg:block lg:sticky lg:top-20 lg:self-start space-y-6">
+          <StreakCalendar
+            performances={calendarPerformances}
+            selectedDate={filters.selectedDate}
+            calendarYear={filters.calendarYear}
+            calendarMonth={filters.calendarMonth}
+            onSelectDate={setSelectedDate}
+            onMonthChange={setCalendarMonth}
+          />
+          <FilterSection />
+        </aside>
+
+        {/* 모바일 전용 캘린더 */}
+        <div className="lg:hidden">
+          <StreakCalendar
+            performances={calendarPerformances}
+            selectedDate={filters.selectedDate}
+            calendarYear={filters.calendarYear}
+            calendarMonth={filters.calendarMonth}
+            onSelectDate={setSelectedDate}
+            onMonthChange={setCalendarMonth}
+          />
+        </div>
+
+        {/* 공연 목록 */}
+        <PerformanceList
+          state={listState}
+          selectedDate={filters.selectedDate}
+          hasActiveFilters={hasActiveFilters}
+          calendarMonth={filters.startDate ? filters.calendarMonth : undefined}
+          onReset={resetAllFilters}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
       </main>
-    </div>
+    </AppLayout>
   );
 }

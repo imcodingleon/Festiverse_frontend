@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find C:/Users/skwog/Documents/Festiverse_project/Festiverse_backend -name openapi* -o -name swagger* -o -name *api*.json -o -name *api*.yaml)",
+      "Bash(xargs grep:*)",
+      "Bash(npx:*)",
+      "Bash(cp -r /c/Users/skwog/Documents/Festiverse_project/festiverse_temp/* /c/Users/skwog/Documents/Festiverse_project/Festiverse_frontend/)",
+      "Bash(cp -r /c/Users/skwog/Documents/Festiverse_project/festiverse_temp/.* /c/Users/skwog/Documents/Festiverse_project/Festiverse_frontend/)",
+      "Bash(rm -rf /c/Users/skwog/Documents/Festiverse_project/festiverse_temp)",
+      "Bash(npm run:*)",
+      "Bash(netsh interface:*)",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":3000\")",
+      "Bash(find C:UsersskwogDocumentsFestiverse_projectFestiverse_frontendPCmain -type f -name *)",
+      "Bash(find C:UsersskwogDocumentsFestiverse_projectFestiverse_frontendPCditail -type f -name *)",
+      "Bash(find C:UsersskwogDocumentsFestiverse_projectFestiverse_frontendmain -type f -name *)",
+      "Bash(find C:UsersskwogDocumentsFestiverse_projectFestiverse_frontendditail -type f -name *)",
+      "Bash(powershell -command \"Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Width\")",
+      "Bash(curl -s \"http://localhost:8000/api/performances?page=1&size=5&stdate=20260401&eddate=20260430\")",
+      "Bash(curl -s \"http://localhost:8000/api/performances?page=1&size=5\")",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(f''''{d[prfnm]}: {d[prfpdfrom]} ~ {d[prfpdto]}''''\\) for d in data[:10]]\")",
+      "Bash(curl:*)"
+    ]
+  }
+}

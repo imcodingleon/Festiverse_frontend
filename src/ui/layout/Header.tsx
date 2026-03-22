@@ -4,15 +4,19 @@ import { useState, useEffect } from "react";
 import { Icon } from "@/ui/components/Icon";
 import { SearchBar } from "@/ui/components/SearchBar";
 import { useFilter } from "@/features/performance/application/hooks/useFilter";
+import { useSearchPageTracking } from "@/infrastructure/tracking/useSearchPageTracking";
 
 export function Header() {
   const { filters, setKeyword } = useFilter();
+  const { trackSearchQuerySubmitted } = useSearchPageTracking();
   const [searchInput, setSearchInput] = useState(filters.keyword);
 
   // filters.keyword가 외부에서 변경되면 (초기화 등) 로컬 input도 동기화
+  /* eslint-disable react-hooks/set-state-in-effect -- controlled sync from global filter atom */
   useEffect(() => {
     setSearchInput(filters.keyword);
   }, [filters.keyword]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleClear = () => {
     setSearchInput("");
@@ -38,13 +42,16 @@ export function Header() {
           <SearchBar
             value={searchInput}
             onChange={setSearchInput}
-            onSubmit={() => setKeyword(searchInput)}
+            onSubmit={() => {
+              trackSearchQuerySubmitted(searchInput, null, "header");
+              setKeyword(searchInput);
+            }}
             onClear={handleClear}
             placeholder="공연 정보 검색하세요"
           />
         </div>
 
-        <button className="w-10 h-10 flex items-center justify-center rounded-lg bg-card-light text-primary border border-card-border shadow-sm lg:hidden">
+        <button className="w-10 h-10 flex items-center justify-center rounded-lg bg-card-light text-primary border border-card-border shadow-sm lg:hidden" type="button">
           <Icon name="notifications" />
         </button>
       </div>

@@ -7,8 +7,10 @@ import { StreakCalendar } from "@/features/performance/ui/components/StreakCalen
 import { PerformanceList } from "@/features/performance/ui/components/PerformanceList";
 import { usePerformanceList } from "@/features/performance/application/hooks/usePerformanceList";
 import { useFilter } from "@/features/performance/application/hooks/useFilter";
+import { useSearchPageLifecycle } from "@/infrastructure/tracking/useSearchPageTracking";
 
 export default function HomePage() {
+  useSearchPageLifecycle();
   const listState = usePerformanceList();
   const { filters, setSelectedDate, setCalendarMonth, resetAllFilters } = useFilter();
 

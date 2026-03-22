@@ -3,9 +3,13 @@ import type { PerformanceDetail } from "@/features/performance/domain/model/perf
 
 interface InfoGridProps {
   detail: PerformanceDetail;
+  sectionRefs?: {
+    lineup?: (node: HTMLElement | null) => void;
+    ticketPrice?: (node: HTMLElement | null) => void;
+  };
 }
 
-export function InfoGrid({ detail }: InfoGridProps) {
+export function InfoGrid({ detail, sectionRefs }: InfoGridProps) {
   return (
     <div className="px-4 pb-6">
       <h1 className="text-2xl font-bold leading-tight tracking-tight mb-4 text-text-main">
@@ -56,7 +60,7 @@ export function InfoGrid({ detail }: InfoGridProps) {
         </div>
 
         {detail.cast && (
-          <div className="bg-surface p-4 rounded-lg border border-border-light">
+          <div ref={sectionRefs?.lineup} className="bg-surface p-4 rounded-lg border border-border-light">
             <div className="flex items-center gap-2 mb-2">
               <Icon name="groups" className="text-primary text-xl" />
               <p className="text-[10px] text-subtext uppercase font-bold tracking-wider">
@@ -68,7 +72,7 @@ export function InfoGrid({ detail }: InfoGridProps) {
         )}
 
         {detail.priceGuide && (
-          <div className="bg-surface p-4 rounded-lg border border-border-light">
+          <div ref={sectionRefs?.ticketPrice} className="bg-surface p-4 rounded-lg border border-border-light">
             <p className="text-[10px] text-subtext uppercase font-bold tracking-wider mb-2">
               Ticket Price
             </p>

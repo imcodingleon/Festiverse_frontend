@@ -3,6 +3,7 @@
 import type { TicketInfoState } from "@/features/performance/domain/state/ticketInfoState";
 import type { RelatedLink } from "@/features/performance/domain/model/performance";
 import { Icon } from "@/ui/components/Icon";
+import { useDetailPageTracking } from "@/infrastructure/tracking/useDetailPageTracking";
 
 interface TicketSectionProps {
   state: TicketInfoState;
@@ -10,6 +11,8 @@ interface TicketSectionProps {
 }
 
 export function TicketSection({ state, relatedLinks = [] }: TicketSectionProps) {
+  const { trackTicketButtonClicked } = useDetailPageTracking();
+
   if (state.status === "LOADING") {
     return (
       <div className="px-4 pb-6">
@@ -21,7 +24,6 @@ export function TicketSection({ state, relatedLinks = [] }: TicketSectionProps) 
   const hasCrawledData = state.status === "LOADED" && state.data.length > 0;
   const hasRelatedLinks = relatedLinks.length > 0;
 
-  // 둘 다 없으면 숨김
   if (!hasCrawledData && !hasRelatedLinks) return null;
 
   return (
@@ -31,7 +33,6 @@ export function TicketSection({ state, relatedLinks = [] }: TicketSectionProps) 
         <h2 className="text-lg font-bold text-text-main">티켓 예매</h2>
       </div>
 
-      {/* 1순위: 크롤링 데이터 */}
       {hasCrawledData &&
         state.data.map((ticket) => (
           <div
@@ -54,6 +55,7 @@ export function TicketSection({ state, relatedLinks = [] }: TicketSectionProps) 
                   href={ticket.vendorUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackTicketButtonClicked(ticket.vendorName)}
                   className="bg-secondary hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg secondary-glow transition-all active:scale-95 text-sm"
                 >
                   예매하기
@@ -63,7 +65,6 @@ export function TicketSection({ state, relatedLinks = [] }: TicketSectionProps) 
           </div>
         ))}
 
-      {/* 2순위 fallback: KOPIS 예매 링크 */}
       {!hasCrawledData &&
         hasRelatedLinks &&
         relatedLinks.map((link, i) => (
@@ -76,6 +77,7 @@ export function TicketSection({ state, relatedLinks = [] }: TicketSectionProps) 
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => trackTicketButtonClicked(link.name)}
               className="bg-secondary hover:opacity-90 text-white font-bold py-2 px-6 rounded-lg secondary-glow transition-all active:scale-95 text-sm"
             >
               예매하기

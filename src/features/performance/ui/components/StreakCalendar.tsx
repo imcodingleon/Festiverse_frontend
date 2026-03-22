@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { Icon } from "@/ui/components/Icon";
 import type { PerformanceSummary } from "@/features/performance/domain/model/performance";
+import { useSearchPageTracking } from "@/infrastructure/tracking/useSearchPageTracking";
 
 interface StreakCalendarProps {
   performances: PerformanceSummary[];
@@ -23,6 +24,7 @@ export function StreakCalendar({
   onSelectDate,
   onMonthChange,
 }: StreakCalendarProps) {
+  const { trackCalendarDateClicked, trackCalendarPeriodNavigated } = useSearchPageTracking();
   const monthLabel = `${year}년 ${month + 1}월`;
 
   const firstDow = new Date(year, month, 1).getDay();
@@ -61,21 +63,27 @@ export function StreakCalendar({
 
   const handlePrev = () => {
     const prevDate = new Date(year, month - 1, 1);
+    const fromYM = `${year}-${String(month + 1).padStart(2, "0")}`;
+    const toYM = `${prevDate.getFullYear()}-${String(prevDate.getMonth() + 1).padStart(2, "0")}`;
+    trackCalendarPeriodNavigated("prev", fromYM, toYM);
     onMonthChange?.(prevDate.getFullYear(), prevDate.getMonth());
   };
 
   const handleNext = () => {
     const nextDate = new Date(year, month + 1, 1);
+    const fromYM = `${year}-${String(month + 1).padStart(2, "0")}`;
+    const toYM = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, "0")}`;
+    trackCalendarPeriodNavigated("next", fromYM, toYM);
     onMonthChange?.(nextDate.getFullYear(), nextDate.getMonth());
   };
 
   const handleDayClick = (dateStr: string) => {
     if (!onSelectDate) return;
-    if (selectedDate === dateStr) {
-      onSelectDate("");
-    } else {
-      onSelectDate(dateStr);
+    const clickedDate = selectedDate === dateStr ? "" : dateStr;
+    if (clickedDate) {
+      trackCalendarDateClicked(clickedDate, year, month + 1);
     }
+    onSelectDate(clickedDate);
   };
 
   return (

@@ -23,8 +23,17 @@ export function InfoGrid({ detail, sectionRefs }: InfoGridProps) {
               Date &amp; Time
             </p>
             <p className="text-sm font-semibold">
-              {detail.startDate} ~ {detail.endDate}
-              {detail.timeGuide && ` | ${detail.timeGuide}`}
+              {detail.timeGuide?.includes("~")
+                ? detail.timeGuide.split(",").map((r, i) => {
+                    const [s, e] = r.trim().split("~");
+                    return (
+                      <span key={i}>
+                        {i > 0 && <br />}
+                        {s?.trim()} ~ {e?.trim()}
+                      </span>
+                    );
+                  })
+                : `${detail.startDate} ~ ${detail.endDate}${detail.timeGuide ? ` | ${detail.timeGuide}` : ""}`}
             </p>
           </div>
         </div>

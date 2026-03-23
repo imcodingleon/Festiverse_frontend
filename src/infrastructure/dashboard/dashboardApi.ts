@@ -38,7 +38,7 @@ async function fetchView<T>(
   viewName: string,
   params?: DateParams,
 ): Promise<DashboardResponse<T>> {
-  const url = new URL(`/api/dashboard/${viewName}`, API_BASE_URL);
+  const url = new URL(`/api/dashboard/${viewName}`, typeof window !== "undefined" ? window.location.origin : API_BASE_URL);
   if (params?.dateFrom) url.searchParams.set("date_from", params.dateFrom);
   if (params?.dateTo) url.searchParams.set("date_to", params.dateTo);
   try {

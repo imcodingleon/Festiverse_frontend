@@ -6,10 +6,8 @@ import {
   getOrCreateSessionId,
   getDeviceType,
 } from "./trackingUtils";
-import { API_BASE_URL } from "@/infrastructure/config/env";
-
 const __DEV__ = process.env.NODE_ENV !== "production";
-const EVENTS_URL = `${API_BASE_URL}/api/events`;
+const EVENTS_URL = "/api/events";
 
 function buildPayload(
   eventType: EventType,

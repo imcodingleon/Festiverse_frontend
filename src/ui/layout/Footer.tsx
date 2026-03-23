@@ -8,8 +8,9 @@ export function Footer() {
               Festiverse
             </h3>
             <p className="text-sm text-subtext mt-2 max-w-sm">
-              당신의 음악적 여정을 더 넓은 우주로 연결합니다. 국내 최대의
-              페스티벌 큐레이션 플랫폼 페스티버스.
+              당신의 음악적 여정을 더 넓은 우주로 연결합니다.
+              <br />
+              국내 최대의 페스티벌 큐레이션 플랫폼 페스티버스.
             </p>
           </div>
           <div className="flex gap-6 text-sm text-subtext">

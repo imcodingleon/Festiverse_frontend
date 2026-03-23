@@ -99,7 +99,7 @@ export function StreakCalendar({
   return (
     <section className="bg-card-light rounded-lg p-4 lg:p-6 lg:pb-10 border border-card-border shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="font-bold font-display text-accent-green text-base lg:text-lg">{monthLabel}</h4>
+        <h4 className="font-bold font-display text-primary text-base lg:text-lg">{monthLabel}</h4>
         <div className="flex gap-2">
           <button onClick={handlePrev}>
             <Icon name="chevron_left" className="text-sm cursor-pointer text-subtext" />

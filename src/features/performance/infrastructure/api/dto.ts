@@ -8,6 +8,7 @@ export interface PerformanceSummaryDto {
   genrenm: string;
   prfstate: string;
   area: string;
+  dtguidance?: string;
 }
 
 export interface FestivalSummaryDto extends PerformanceSummaryDto {

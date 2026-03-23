@@ -33,15 +33,25 @@ export function StreakCalendar({
 
   const performanceDates = useMemo(() => {
     const set = new Set<string>();
-    for (const p of performances) {
-      const start = new Date(p.startDate.replace(/\./g, "-"));
-      const end = new Date(p.endDate.replace(/\./g, "-"));
+    const addRange = (startStr: string, endStr: string) => {
+      const start = new Date(startStr.replace(/\./g, "-"));
+      const end = new Date(endStr.replace(/\./g, "-"));
       const cur = new Date(start);
       while (cur <= end) {
         set.add(
           `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, "0")}-${String(cur.getDate()).padStart(2, "0")}`,
         );
         cur.setDate(cur.getDate() + 1);
+      }
+    };
+    for (const p of performances) {
+      if (p.dateRanges) {
+        for (const range of p.dateRanges.split(",")) {
+          const [rs, re] = range.trim().split("~");
+          if (rs && re) addRange(rs.trim(), re.trim());
+        }
+      } else {
+        addRange(p.startDate, p.endDate);
       }
     }
     return set;

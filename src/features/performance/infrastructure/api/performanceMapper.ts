@@ -21,6 +21,7 @@ export function toPerformanceSummary(dto: PerformanceSummaryDto): PerformanceSum
     genre: dto.genrenm,
     state: dto.prfstate,
     area: dto.area,
+    dateRanges: dto.dtguidance || undefined,
   };
 }
 

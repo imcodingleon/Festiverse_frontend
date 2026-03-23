@@ -8,6 +8,7 @@ export interface PerformanceSummary {
   genre: string;
   state: string;
   area: string;
+  dateRanges?: string;
 }
 
 export interface FestivalSummary extends PerformanceSummary {

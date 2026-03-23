@@ -31,7 +31,7 @@ export function ReviewSection({ blogState }: ReviewSectionProps) {
         {blogState.status === "LOADED" && blogState.data.length > 0 && (
           <div className="space-y-3">
             {blogState.data.map((review, i) => (
-              <BlogReviewItem key={i} review={review} />
+              <BlogReviewItem key={i} review={review} index={i + 1} />
             ))}
           </div>
         )}

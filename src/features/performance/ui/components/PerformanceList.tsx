@@ -8,6 +8,7 @@ import { PerformanceCardSkeleton } from "./PerformanceCardSkeleton";
 import { EmptyState } from "./EmptyState";
 import { ErrorState } from "./ErrorState";
 import { Icon } from "@/ui/components/Icon";
+import { useSearchPageTracking } from "@/infrastructure/tracking/useSearchPageTracking";
 
 interface PerformanceListProps {
   state: PerformanceListState;
@@ -42,6 +43,7 @@ function sortPerformances(
 }
 
 export function PerformanceList({ state, selectedDate, hasActiveFilters, calendarMonth, onReset }: PerformanceListProps) {
+  const { trackSortChanged } = useSearchPageTracking();
   const [sort, setSort] = useState<"latest" | "oldest">("latest");
 
   const title = selectedDate
@@ -79,7 +81,12 @@ export function PerformanceList({ state, selectedDate, hasActiveFilters, calenda
             </button>
           )}
           <button
-            onClick={() => setSort((s) => (s === "latest" ? "oldest" : "latest"))}
+            onClick={() => {
+              const prev = sort;
+              const next = prev === "latest" ? "oldest" : "latest";
+              trackSortChanged(next, prev);
+              setSort(next);
+            }}
             className="text-xs text-subtext flex items-center gap-1 hover:text-primary transition-colors cursor-pointer"
           >
             {sortLabel} <Icon name="swap_vert" className="text-sm" />
@@ -95,7 +102,7 @@ export function PerformanceList({ state, selectedDate, hasActiveFilters, calenda
           </>
         )}
         {state.status === "LOADED" &&
-          sortedData.map((p) => <PerformanceCard key={p.id} performance={p} />)}
+          sortedData.map((p, i) => <PerformanceCard key={p.id} performance={p} index={i} />)}
         {state.status === "EMPTY" && <EmptyState />}
         {state.status === "ERROR" && <ErrorState message={state.message} />}
       </div>

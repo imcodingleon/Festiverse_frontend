@@ -1,22 +1,39 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useAtomValue } from "jotai";
 import { Icon } from "@/ui/components/Icon";
 import { Badge } from "@/ui/components/Badge";
 import type { PerformanceSummary } from "@/features/performance/domain/model/performance";
 import { formatDday, isDdayPast, formatDateRange } from "@/features/performance/domain/model/utils";
+import { filterAtom } from "@/features/performance/application/atoms/performanceAtoms";
+import { useSearchPageTracking } from "@/infrastructure/tracking/useSearchPageTracking";
 
 interface PerformanceCardProps {
   performance: PerformanceSummary;
+  index: number;
 }
 
-export function PerformanceCard({ performance }: PerformanceCardProps) {
+export function PerformanceCard({ performance, index }: PerformanceCardProps) {
+  const { trackFestivalItemClicked, trackFavoriteToggled } = useSearchPageTracking();
+  const filters = useAtomValue(filterAtom);
+  const [isFavorited, setIsFavorited] = useState(false);
   const dday = formatDday(performance.startDate);
   const past = isDdayPast(performance.startDate);
 
   return (
-    <Link href={`/performance/${performance.id}`}>
+    <Link
+      href={`/performance/${performance.id}`}
+      onClick={() => trackFestivalItemClicked(performance.id, performance.name, index, {
+        region: filters.region ? [filters.region] : [],
+        genre: filters.genre ? [filters.genre] : [],
+        selected_date: filters.selectedDate || null,
+        keyword: filters.keyword,
+      })}
+    >
       <div className="bg-card-light rounded-lg overflow-hidden border border-card-border flex lg:flex-col shadow-sm hover:shadow-md transition-shadow">
-        {/* 이미지 영역 */}
         <div className="w-28 h-36 lg:w-full lg:h-64 shrink-0 relative">
           {performance.posterUrl ? (
             <Image
@@ -36,7 +53,6 @@ export function PerformanceCard({ performance }: PerformanceCardProps) {
           </div>
         </div>
 
-        {/* 정보 영역 */}
         <div className="p-3 lg:p-4 flex flex-col justify-between flex-1 min-w-0">
           <div>
             <h4 className="font-bold text-sm lg:text-base line-clamp-1 mb-1 text-text-main">
@@ -55,7 +71,22 @@ export function PerformanceCard({ performance }: PerformanceCardProps) {
             <span className="text-xs font-bold text-accent-green">
               #{performance.genre}
             </span>
-            <Icon name="favorite" className="text-subtext/40 text-lg lg:hidden" />
+            <button
+              type="button"
+              className="lg:hidden"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const next = !isFavorited;
+                setIsFavorited(next);
+                trackFavoriteToggled(performance.id, next, "search");
+              }}
+            >
+              <Icon
+                name="favorite"
+                className={`text-lg ${isFavorited ? "text-secondary" : "text-subtext/40"}`}
+              />
+            </button>
           </div>
         </div>
       </div>

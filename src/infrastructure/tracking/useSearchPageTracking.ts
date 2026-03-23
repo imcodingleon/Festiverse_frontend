@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import { usePathname } from "next/navigation";
-import { useStore } from "jotai";
 import { EVENT_TYPES } from "./constants";
 import { trackEvent, sendBeaconEvent } from "./trackEvent";
 import { trackFavoriteToggled } from "./useAppTracking";
@@ -18,7 +17,6 @@ import {
   markFilteredSession,
   getIsFilteredSession,
 } from "./trackingState";
-import { filterAtom } from "@/features/performance/application/atoms/performanceAtoms";
 
 export function useSearchPageLifecycle(): void {
   const pathname = usePathname();
@@ -80,8 +78,6 @@ export function useSearchPageLifecycle(): void {
 }
 
 export function useSearchPageTracking() {
-  const store = useStore();
-
   const trackFilterOptionToggled = useCallback(
     (
       filterType: "region" | "genre",
@@ -144,23 +140,18 @@ export function useSearchPageTracking() {
       festivalId: string,
       festivalName: string,
       listPosition: number,
+      activeFilters: { region: string[]; genre: string[]; selected_date: string | null; keyword: string },
     ) => {
-      const filters = store.get(filterAtom);
       trackEvent(EVENT_TYPES.FESTIVAL_ITEM_CLICKED, {
         festival_id: festivalId,
         festival_name: festivalName,
         list_position: listPosition,
-        active_filters: {
-          region: filters.region ? [filters.region] : [],
-          genre: filters.genre ? [filters.genre] : [],
-          selected_date: filters.selectedDate || null,
-          keyword: filters.keyword,
-        },
+        active_filters: activeFilters,
         is_filtered_session: getIsFilteredSession(),
         time_since_page_entered_ms: getTimeSinceSearchPageEntered(),
       });
     },
-    [store],
+    [],
   );
 
   const trackSearchQuerySubmitted = useCallback(

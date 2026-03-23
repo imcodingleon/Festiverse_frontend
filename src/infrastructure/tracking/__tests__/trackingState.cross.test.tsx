@@ -51,7 +51,12 @@ describe("검증 5 — trackingState 교차 검증", () => {
     });
     result.current.trackFilterApplyButtonClicked("서울", "");
     expect(getIsFilteredSession()).toBe(true);
-    result.current.trackFestivalItemClicked("P", "n", 0);
+    result.current.trackFestivalItemClicked("P", "n", 0, {
+      region: ["서울"],
+      genre: [],
+      selected_date: null,
+      keyword: "",
+    });
   });
 
   it("필터 미적용 시 is_filtered_session false", () => {

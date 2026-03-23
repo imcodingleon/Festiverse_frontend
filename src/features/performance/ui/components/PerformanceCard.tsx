@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useAtomValue } from "jotai";
 import { Icon } from "@/ui/components/Icon";
 import { Badge } from "@/ui/components/Badge";
 import type { PerformanceSummary } from "@/features/performance/domain/model/performance";
 import { formatDday, isDdayPast, formatDateRange } from "@/features/performance/domain/model/utils";
+import { filterAtom } from "@/features/performance/application/atoms/performanceAtoms";
 import { useSearchPageTracking } from "@/infrastructure/tracking/useSearchPageTracking";
 
 interface PerformanceCardProps {
@@ -16,6 +18,7 @@ interface PerformanceCardProps {
 
 export function PerformanceCard({ performance, index }: PerformanceCardProps) {
   const { trackFestivalItemClicked, trackFavoriteToggled } = useSearchPageTracking();
+  const filters = useAtomValue(filterAtom);
   const [isFavorited, setIsFavorited] = useState(false);
   const dday = formatDday(performance.startDate);
   const past = isDdayPast(performance.startDate);
@@ -23,7 +26,12 @@ export function PerformanceCard({ performance, index }: PerformanceCardProps) {
   return (
     <Link
       href={`/performance/${performance.id}`}
-      onClick={() => trackFestivalItemClicked(performance.id, performance.name, index)}
+      onClick={() => trackFestivalItemClicked(performance.id, performance.name, index, {
+        region: filters.region ? [filters.region] : [],
+        genre: filters.genre ? [filters.genre] : [],
+        selected_date: filters.selectedDate || null,
+        keyword: filters.keyword,
+      })}
     >
       <div className="bg-card-light rounded-lg overflow-hidden border border-card-border flex lg:flex-col shadow-sm hover:shadow-md transition-shadow">
         <div className="w-28 h-36 lg:w-full lg:h-64 shrink-0 relative">

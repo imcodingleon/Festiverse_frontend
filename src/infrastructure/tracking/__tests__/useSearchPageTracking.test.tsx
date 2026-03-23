@@ -4,8 +4,6 @@ import { Provider, createStore } from "jotai";
 import type { ReactNode } from "react";
 import { useSearchPageTracking, useSearchPageLifecycle } from "../useSearchPageTracking";
 import { EVENT_TYPES } from "../constants";
-import { filterAtom } from "@/features/performance/application/atoms/performanceAtoms";
-import { initialFilterState } from "@/features/performance/domain/state/filterState";
 import {
   getIsFilteredSession,
   markFilteredSession,
@@ -113,18 +111,16 @@ describe("검증 3 — useSearchPageTracking", () => {
     it("trackFestivalItemClicked + active_filters + is_filtered_session", () => {
       const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
       const store = createStore();
-      store.set(filterAtom, {
-        ...initialFilterState,
-        region: "R1",
-        genre: "",
-        selectedDate: "",
-        keyword: "k",
-      });
       markFilteredSession();
       const { result } = renderHook(() => useSearchPageTracking(), {
         wrapper: wrapper(store),
       });
-      result.current.trackFestivalItemClicked("PF9", "이름", 2);
+      result.current.trackFestivalItemClicked("PF9", "이름", 2, {
+        region: ["R1"],
+        genre: [],
+        selected_date: null,
+        keyword: "k",
+      });
       const payload = logSpy.mock.calls.at(-1)?.[1] as Record<string, unknown>;
       const ed = payload?.event_data as Record<string, unknown>;
       expect(ed?.festival_id).toBe("PF9");

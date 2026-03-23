@@ -8,6 +8,7 @@ import {
 } from "./trackingUtils";
 import { API_BASE_URL } from "@/infrastructure/config/env";
 
+const __DEV__ = process.env.NODE_ENV !== "production";
 const EVENTS_URL = `${API_BASE_URL}/api/events`;
 
 function buildPayload(
@@ -32,7 +33,7 @@ export function trackEvent(
   pageUrlOverride?: string,
 ): void {
   const payload = buildPayload(eventType, eventData, pageUrlOverride);
-  console.log("[TrackEvent]", payload);
+  if (__DEV__) console.log("[TrackEvent]", payload);
   fetch(EVENTS_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -46,7 +47,7 @@ export function sendBeaconEvent(
   pageUrlOverride?: string,
 ): void {
   const payload = buildPayload(eventType, eventData, pageUrlOverride);
-  console.log("[TrackEvent:beacon]", payload);
+  if (__DEV__) console.log("[TrackEvent:beacon]", payload);
   const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
   if (typeof navigator !== "undefined" && navigator.sendBeacon?.(EVENTS_URL, blob)) return;
   fetch(EVENTS_URL, {

@@ -87,7 +87,13 @@ export function FilterSection() {
         </button>
         <button
           onClick={handleApply}
-          className="flex-1 py-2 lg:py-2.5 text-sm lg:text-[15px] text-white bg-primary rounded-lg font-bold hover:bg-primary/90 transition-colors"
+          className={`flex-1 py-2 lg:py-2.5 text-sm lg:text-[15px] rounded-lg transition-all ${
+            searchInput !== filters.keyword ||
+            localRegion !== filters.region ||
+            localGenre !== filters.genre
+              ? "text-white bg-primary font-bold hover:bg-primary/90 shadow-md shadow-primary/25 scale-[1.02]"
+              : "text-subtext bg-surface border border-card-border"
+          }`}
         >
           필터 적용하기
         </button>

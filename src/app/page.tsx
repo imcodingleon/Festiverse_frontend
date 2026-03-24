@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState, useCallback } from "react";
 import { AppLayout } from "@/ui/layout/AppLayout";
 import { Header } from "@/ui/layout/Header";
 import { FilterSection } from "@/features/performance/ui/components/FilterSection";
@@ -8,11 +9,46 @@ import { PerformanceList } from "@/features/performance/ui/components/Performanc
 import { usePerformanceList } from "@/features/performance/application/hooks/usePerformanceList";
 import { useFilter } from "@/features/performance/application/hooks/useFilter";
 import { useSearchPageLifecycle } from "@/infrastructure/tracking/useSearchPageTracking";
+import { getABGroup } from "@/infrastructure/ab/abGroup";
+import { ActiveFilterBanner } from "@/features/performance/ui/components/ActiveFilterBanner";
 
 export default function HomePage() {
   useSearchPageLifecycle();
   const listState = usePerformanceList();
-  const { filters, setSelectedDate, setCalendarMonth, resetAllFilters } = useFilter();
+  const { filters, setSelectedDate, setCalendarMonth, resetAllFilters, applyFilters } = useFilter();
+
+  // A/B 테스트: B그룹에게 서울 + 락/인디 필터 자동 적용 (트래킹 없이)
+  const abApplied = useRef(false);
+  useEffect(() => {
+    if (abApplied.current) return;
+    abApplied.current = true;
+    if (getABGroup() === "B") {
+      applyFilters({ region: "서울", genre: "락/인디" });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 배너 닫기 상태 — 필터가 변경되면 다시 표시
+  const [bannerDismissed, setBannerDismissed] = useState(false);
+  const prevFilterKey = useRef("");
+  const filterKey = `${filters.region}|${filters.genre}`;
+  if (filterKey !== prevFilterKey.current) {
+    prevFilterKey.current = filterKey;
+    if (bannerDismissed) setBannerDismissed(false);
+  }
+
+  const hasFilterTags = filters.region !== "" || filters.genre !== "";
+  const showBanner = hasFilterTags && !bannerDismissed;
+
+  const handleRemoveFilter = useCallback(
+    (type: "region" | "genre") => {
+      applyFilters({ [type]: "" });
+    },
+    [applyFilters],
+  );
+
+  const handleDismissBanner = useCallback(() => {
+    setBannerDismissed(true);
+  }, []);
 
   // 캘린더에는 날짜 필터링 전 전체 데이터를 사용 (selectedDate로 필터링해도 캘린더 표시 유지)
   const calendarPerformances =
@@ -60,13 +96,23 @@ export default function HomePage() {
         </div>
 
         {/* 공연 목록 */}
-        <PerformanceList
-          state={listState}
-          selectedDate={filters.selectedDate}
-          hasActiveFilters={hasActiveFilters}
-          calendarMonth={filters.startDate ? filters.calendarMonth : undefined}
-          onReset={resetAllFilters}
-        />
+        <div className="space-y-4">
+          {showBanner && (
+            <ActiveFilterBanner
+              region={filters.region}
+              genre={filters.genre}
+              onRemoveFilter={handleRemoveFilter}
+              onDismiss={handleDismissBanner}
+            />
+          )}
+          <PerformanceList
+            state={listState}
+            selectedDate={filters.selectedDate}
+            hasActiveFilters={hasActiveFilters}
+            calendarMonth={filters.startDate ? filters.calendarMonth : undefined}
+            onReset={resetAllFilters}
+          />
+        </div>
       </main>
     </AppLayout>
   );

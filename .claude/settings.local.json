@@ -19,7 +19,9 @@
       "Bash(curl -s \"http://localhost:8000/api/performances?page=1&size=5&stdate=20260401&eddate=20260430\")",
       "Bash(curl -s \"http://localhost:8000/api/performances?page=1&size=5\")",
       "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(f''''{d[prfnm]}: {d[prfpdfrom]} ~ {d[prfpdto]}''''\\) for d in data[:10]]\")",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(wc -l /c/Users/skwog/Documents/Festiverse_project/Festiverse_frontend/src/**/*.ts /c/Users/skwog/Documents/Festiverse_project/Festiverse_frontend/src/**/*.tsx)",
+      "Bash(xargs wc:*)"
     ]
   }
 }

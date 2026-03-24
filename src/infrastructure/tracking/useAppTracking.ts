@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { EVENT_TYPES } from "./constants";
 import { trackEvent } from "./trackEvent";
 import { getReturnVisitInfo, updateLastVisitDate } from "./trackingUtils";
+import { getABGroup } from "@/infrastructure/ab/abGroup";
 
 export function useAppTracking(): void {
   const fired = useRef(false);
@@ -18,6 +19,7 @@ export function useAppTracking(): void {
       is_return_user,
       days_since_last_visit,
       referrer: document.referrer || null,
+      ab_group: getABGroup(),
     });
 
     updateLastVisitDate();

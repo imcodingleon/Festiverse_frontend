@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/ui/components/Icon";
 import type { PerformanceSummary } from "@/features/performance/domain/model/performance";
 import { useSearchPageTracking } from "@/infrastructure/tracking/useSearchPageTracking";
@@ -57,18 +57,22 @@ export function StreakCalendar({
     return set;
   }, [performances]);
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const [todayStr, setTodayStr] = useState("");
+  useEffect(() => {
+    const now = new Date();
+    setTodayStr(
+      `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`,
+    );
+  }, []);
 
-  const cells: { day: number; inMonth: boolean; dateStr: string }[] = [];
+  const cells: { day: number; inMonth: boolean; dateStr: string; key: string }[] = [];
   for (let i = 0; i < firstDow; i++) {
     const d = prevMonthDays - firstDow + 1 + i;
-    cells.push({ day: d, inMonth: false, dateStr: "" });
+    cells.push({ day: d, inMonth: false, dateStr: "", key: `prev-${d}` });
   }
   for (let d = 1; d <= daysInMonth; d++) {
     const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-    cells.push({ day: d, inMonth: true, dateStr });
+    cells.push({ day: d, inMonth: true, dateStr, key: dateStr });
   }
 
   const handlePrev = () => {
@@ -121,11 +125,11 @@ export function StreakCalendar({
           const hasPerformance = cell.inMonth && performanceDates.has(cell.dateStr);
           return (
             <button
-              key={i}
+              key={cell.key}
               type="button"
               disabled={!cell.inMonth}
               onClick={() => cell.inMonth && handleDayClick(cell.dateStr)}
-              className={`text-xs lg:text-sm py-1 lg:py-2 relative cursor-pointer transition-colors rounded ${
+              className={`text-xs lg:text-sm py-1 lg:py-2 relative cursor-pointer rounded ${
                 !cell.inMonth
                   ? "text-subtext/30 cursor-default"
                   : isSelected

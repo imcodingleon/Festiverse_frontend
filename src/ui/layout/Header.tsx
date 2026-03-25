@@ -31,9 +31,9 @@ export function Header() {
           <Image
             src="/logo.png"
             alt="Festiverse 로고"
-            width={52}
-            height={52}
-            className="w-[52px] h-[52px] object-contain"
+            width={44}
+            height={44}
+            className="w-11 h-11 object-contain"
           />
           <div>
             <h2 className="text-xl font-bold font-display leading-tight text-text-main">

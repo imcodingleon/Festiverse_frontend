@@ -51,9 +51,6 @@ export function Header() {
           />
         </div>
 
-        <button className="w-10 h-10 flex items-center justify-center rounded-lg bg-card-light text-primary border border-card-border shadow-sm lg:hidden" type="button">
-          <Icon name="notifications" />
-        </button>
       </div>
     </header>
   );

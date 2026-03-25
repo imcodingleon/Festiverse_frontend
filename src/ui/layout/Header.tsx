@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Icon } from "@/ui/components/Icon";
 import { SearchBar } from "@/ui/components/SearchBar";
 import { useFilter } from "@/features/performance/application/hooks/useFilter";
@@ -27,9 +28,13 @@ export function Header() {
     <header className="sticky top-0 z-50 bg-background-light/80 backdrop-blur-md px-4 lg:px-8 pt-4 pb-2 border-b border-card-border">
       <div className="flex items-center justify-between mb-2 lg:max-w-[1600px] lg:mx-auto lg:px-0">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden border border-primary/20 lg:hidden">
-            <Icon name="person" className="text-primary text-xl" />
-          </div>
+          <Image
+            src="/logo.png"
+            alt="Festiverse 로고"
+            width={40}
+            height={40}
+            className="w-10 h-10 object-contain"
+          />
           <div>
             <h2 className="text-xl font-bold font-display leading-tight text-text-main">
               Festiverse
